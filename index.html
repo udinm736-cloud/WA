@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PESAN WA</title>
+<style>
+  :root{
+    --wa:#25D366; --wa-dark:#1DA851; --bg:#0f1722; --card:#1a2636;
+    --card-border:rgba(255,255,255,.09); --text:#f1f5f9; --muted:#94a3b8;
+    --danger:#f87171; --warn:#fbbf24; --input:#0d1520;
+  }
+  /* ===== Mode terang ===== */
+  body.light{
+    --bg:#edf1f6; --card:#ffffff; --card-border:rgba(15,23,42,.12);
+    --text:#0f1722; --muted:#64748b; --input:#f1f5f9;
+    --danger:#dc2626; --warn:#b45309;
+    background:radial-gradient(1200px 600px at 50% -10%, #d8efe1 0%, var(--bg) 55%) fixed, var(--bg);
+  }
+  body.light .btn-ghost{background:rgba(15,23,42,.07)}
+  body.light .btn-ghost:hover{background:rgba(15,23,42,.12)}
+  body.light ol.steps{color:#334155}
+  body.light .alert.warn{color:#92400e}
+  body.light .alert.err{color:#b91c1c}
+  body.light .alert.ok{color:#15803d}
+  body.light .badge.ok{color:#15803d}
+  body.light .badge.no{color:#b91c1c}
+  body.light .badge.cat{color:#6d28d9}
+  body.light .spinner{border-color:rgba(15,23,42,.15)}
+  *{box-sizing:border-box; margin:0; padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:radial-gradient(1200px 600px at 50% -10%, #1d3a2f 0%, var(--bg) 55%) fixed, var(--bg);
+    color:var(--text); min-height:100vh; padding:20px 14px 60px;
+  }
+  .wrap{max-width:640px; margin:0 auto}
+  header{text-align:center; margin-bottom:18px}
+  header .logo svg{display:block; margin:0 auto}
+  header h1{font-size:22px; margin:8px 0 4px; letter-spacing:1px}
+  .header-btns{display:flex; gap:8px; justify-content:center; margin-top:10px; flex-wrap:wrap}
+  .card{
+    background:var(--card); border:1px solid var(--card-border);
+    border-radius:14px; padding:14px; margin-bottom:14px;
+    box-shadow:0 8px 24px rgba(0,0,0,.25);
+  }
+  .card h2{font-size:15px; margin-bottom:10px}
+  .card h2 .count{color:var(--muted); font-weight:normal; font-size:12px}
+  label.lbl{display:block; font-size:12px; color:var(--muted); margin-bottom:6px}
+  textarea, input[type=text], input[type=password], select{
+    width:100%; background:var(--input); border:1px solid var(--card-border);
+    color:var(--text); border-radius:10px; padding:10px 12px; font-size:14px;
+    font-family:inherit; outline:none;
+  }
+  textarea:focus, input[type=text]:focus, input[type=password]:focus, select:focus{border-color:var(--wa)}
+  textarea{min-height:86px; resize:vertical}
+  .hint{font-size:11px; color:var(--muted); margin-top:6px}
+  .hint code{background:var(--input); padding:1px 6px; border-radius:6px; color:var(--wa)}
+  /* Tabs */
+  .tabs{display:flex; gap:8px; margin-bottom:14px}
+  .tab{
+    flex:1; border:1px solid var(--card-border); background:var(--card);
+    color:var(--muted); border-radius:12px; padding:11px 6px; font-size:13px; font-weight:700;
+    cursor:pointer; font-family:inherit; text-align:center;
+  }
+  .tab.active{background:var(--wa); border-color:var(--wa); color:#06281c}
+  .tab .n{font-weight:normal; opacity:.75}
+  /* Rows */
+  .row{display:flex; gap:10px; align-items:center; padding:11px 4px; border-top:1px solid var(--card-border)}
+  .row:first-of-type{border-top:none}
+  .avatar{
+    width:42px; height:42px; border-radius:50%; flex:0 0 42px;
+    background:linear-gradient(135deg,#128C7E,#25D366);
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:17px; color:#06281c;
+  }
+  .avatar.grup{background:linear-gradient(135deg,#7c3aed,#a78bfa); color:#1e1033}
+  .info{flex:1; min-width:0}
+  .info .nama{font-weight:600; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .info .sub{font-size:12px; color:var(--muted); margin-top:2px}
+  .info .sub.invalid{color:var(--danger)}
+  .btns{display:flex; gap:8px; flex:0 0 auto}
+  .btn{
+    border:none; border-radius:10px; padding:9px 13px; font-size:13px; font-weight:700;
+    cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px;
+    font-family:inherit; white-space:nowrap;
+  }
+  .btn-wa{background:var(--wa); color:#06281c}
+  .btn-wa:hover{background:var(--wa-dark)}
+  .btn-ghost{background:rgba(255,255,255,.08); color:var(--text)}
+  .btn-ghost:hover{background:rgba(255,255,255,.14)}
+  .btn:disabled{opacity:.4; cursor:not-allowed}
+  .toolbar{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px}
+  .empty{text-align:center; color:var(--muted); font-size:13px; padding:18px 8px}
+  .alert{border-radius:12px; padding:12px 14px; font-size:13px; margin-bottom:14px; line-height:1.6}
+  .alert.warn{background:rgba(251,191,36,.12); border:1px solid rgba(251,191,36,.4); color:#fde68a}
+  .alert.err{background:rgba(248,113,113,.12); border:1px solid rgba(248,113,113,.4); color:#fecaca}
+  .alert.ok{background:rgba(37,211,102,.12); border:1px solid rgba(37,211,102,.4); color:#bbf7d0}
+  .loading{text-align:center; color:var(--muted); padding:26px; font-size:14px}
+  .spinner{display:inline-block; width:18px; height:18px; border:3px solid rgba(255,255,255,.2);
+    border-top-color:var(--wa); border-radius:50%; animation:spin 0.8s linear infinite; vertical-align:-4px; margin-right:8px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  /* Drop zone */
+  .drop{
+    border:2px dashed rgba(37,211,102,.5); border-radius:12px; padding:24px 14px;
+    text-align:center; cursor:pointer; transition:all .2s; margin-top:4px;
+  }
+  .drop:hover, .drop.over{background:rgba(37,211,102,.08); border-color:var(--wa)}
+  .drop .big{font-size:32px}
+  .drop p{font-size:13px; color:var(--muted); margin-top:8px}
+  input[type=file]{display:none}
+  ol.steps{margin:6px 0 0 20px; font-size:13px; line-height:1.8; color:#dbe4ee}
+  ol.steps b{color:var(--wa)}
+  td.num{font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12.5px}
+  .badge{display:inline-block; font-size:10px; padding:2px 8px; border-radius:20px}
+  .badge.ok{background:rgba(37,211,102,.15); color:#86efac}
+  .badge.no{background:rgba(248,113,113,.15); color:#fca5a5}
+  .badge.cat{background:rgba(167,139,250,.15); color:#c4b5fd}
+  footer{text-align:center; color:var(--muted); font-size:11px; margin-top:22px; line-height:1.7}
+  .toast{
+    position:fixed; left:50%; bottom:24px; transform:translateX(-50%) translateY(20px);
+    background:#0d1520; border:1px solid var(--wa); color:var(--text);
+    padding:10px 18px; border-radius:12px; font-size:13px; opacity:0; pointer-events:none;
+    transition:all .25s ease; z-index:50;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+  /* Mode pengguna: elemen khusus admin disembunyikan */
+  body:not(.is-admin) .need-admin{display:none !important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">
+      <svg viewBox="0 0 48 48" width="46" height="46" role="img" aria-label="WhatsApp">
+        <circle cx="24" cy="24" r="24" fill="#25D366"/>
+        <path fill="#ffffff" d="M24 9.6c-8 0-14.5 6.3-14.5 14 0 2.6.7 5.1 2.1 7.3l-1.4 5.1 5.3-1.4c2.1 1.2 4.5 1.8 7 1.8 8 0 14.5-6.3 14.5-14S32 9.6 24 9.6z"/>
+        <g transform="translate(14.5,13.5) scale(0.79)" fill="#25D366">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>
+        </g>
+      </svg>
+    </div>
+    <h1>PESAN WA</h1>
+    <div class="header-btns">
+      <button class="btn btn-ghost" id="btnTheme" title="Mode terang/gelap">🌙</button>
+    </div>
+  </header>
+
+  <!-- LAYAR LOGIN -->
+  <div class="card" id="loginScreen" style="max-width:380px; margin:26px auto">
+    <h2>🔐 Masuk</h2>
+    <p class="hint" style="margin-bottom:10px">Masukkan kode untuk membuka aplikasi.</p>
+    <input type="password" id="loginCode" placeholder="Kode masuk" autocomplete="off"
+      style="margin-bottom:10px; padding:12px">
+    <button class="btn btn-wa" id="btnLogin"
+      style="width:100%; justify-content:center; padding:12px">Masuk</button>
+    <div id="loginErr" style="margin-top:10px"></div>
+  </div>
+
+  <!-- ISI APLIKASI (muncul setelah login) -->
+  <div id="appBody" style="display:none">
+  <div class="toolbar" style="margin-bottom:14px">
+    <a class="btn btn-ghost need-admin" id="btnDb" target="_blank" rel="noopener"
+       href="https://docs.google.com/spreadsheets/d/1XeQgqwdNu6Dur7ILcLg2uI754IXG_hhJmrN83C0dAjc/edit"
+       title="Buka database Google Sheet">🗄️ Database</a>
+    <button class="btn btn-ghost" id="btnAdminMode" title="Masuk sebagai admin">🔒 Mode Admin</button>
+    <button class="btn btn-ghost" id="btnLogout" title="Keluar dan kembali ke layar masuk">🚪 Keluar</button>
+  </div>
+  <div id="cfgWarn"></div>
+
+  <div class="card">
+    <h2>✉️ Template Pesan</h2>
+    <label class="lbl" for="tpl">Berlaku untuk semua tombol 💬 Chat WA di semua tab:</label>
+    <textarea id="tpl" placeholder="Tulis pesan…"></textarea>
+    <div class="hint">Gunakan <code>{nama}</code> — otomatis diganti nama kontak. Contoh: <i>Halo {nama}, ini Wartam dari SMPN 4 Majenang.</i></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active need-admin" data-tab="ambil">📋 Ambil Nomor</button>
+    <button class="tab" data-tab="kontak">👤 Kontak <span class="n" id="nKontak"></span></button>
+    <button class="tab" data-tab="tautan">🔗 Tautan <span class="n" id="nTautan"></span></button>
+    <button class="tab" data-tab="broadcast">📢 Broadcast</button>
+  </div>
+
+  <!-- TAB: AMBIL NOMOR -->
+  <div class="card" id="tab-ambil">
+    <h2>📋 Ambil nomor dari Export Chat</h2>
+    <ol class="steps">
+      <li>Di HP: buka grup → ketuk <b>nama grup</b> → <b>Ekspor chat</b> → <b>Tanpa media</b>, simpan file .txt-nya.</li>
+      <li>Unggah file .txt di bawah — daftar nomor pengirim langsung tampil dan bisa dihubungi atau disimpan ke Sheet.</li>
+    </ol>
+    <div class="drop" id="drop">
+      <div class="big">📄</div>
+      <p><b>Ketuk untuk memilih file .txt</b> atau seret ke sini</p>
+    </div>
+    <input type="file" id="file" accept=".txt,text/plain">
+    <label class="lbl need-admin" for="defCat" style="margin-top:10px">🏷️ Grup/kategori untuk nomor yang disimpan ke Sheet (opsional, mis. <i>Orang Tua 9D</i>)</label>
+    <input type="text" id="defCat" class="need-admin" placeholder="Kosongkan jika tidak perlu kategori">
+    <div id="parseStatus" style="margin-top:10px"></div>
+    <div id="parseResult"></div>
+  </div>
+
+  <!-- TAB: KONTAK -->
+  <div class="card" id="tab-kontak" style="display:none">
+    <h2>👤 Kontak <span class="count" id="cKontak"></span></h2>
+    <label class="lbl" for="q">🔎 Cari nama / nomor</label>
+    <input type="text" id="q" placeholder="Ketik untuk mencari…" style="margin-bottom:6px">
+    <label class="lbl" for="fCat">🏷️ Filter grup/kategori</label>
+    <select id="fCat" style="margin-bottom:10px"><option value="">Semua kategori</option></select>
+    <div class="toolbar" style="margin-bottom:10px">
+      <button class="btn btn-wa need-admin" id="btnAdd">➕ Tambah kontak baru</button>
+    </div>
+    <div id="addForm" class="need-admin" style="display:none">
+      <div class="row">
+        <div class="avatar">➕</div>
+        <div class="info">
+          <input type="text" id="an" placeholder="Nama" style="margin-bottom:6px; padding:8px 10px; font-size:13px">
+          <input type="text" id="ap" placeholder="Nomor WA (mis. 081234567890)" inputmode="tel"
+            style="margin-bottom:6px; padding:8px 10px; font-size:13px">
+          <input type="text" id="ac" placeholder="Grup/Kategori (mis. Guru)"
+            style="padding:8px 10px; font-size:13px">
+        </div>
+        <div class="btns">
+          <button class="btn btn-wa" onclick="saveNew()" title="Simpan">💾</button>
+          <button class="btn btn-ghost" onclick="toggleAdd(false)" title="Batal">✖</button>
+        </div>
+      </div>
+    </div>
+    <div id="listKontak"><div class="loading"><span class="spinner"></span>Memuat data…</div></div>
+  </div>
+
+  <!-- TAB: GRUP -->
+  <div class="card" id="tab-tautan" style="display:none">
+    <h2>🔗 Tautan <span class="count" id="cTautan"></span></h2>
+    <div id="listTautan"><div class="loading"><span class="spinner"></span>Memuat data…</div></div>
+  </div>
+
+  <!-- TAB: BROADCAST -->
+  <div class="card" id="tab-broadcast" style="display:none">
+    <h2>📢 Broadcast Pesan</h2>
+    <div class="hint" style="margin-bottom:10px">Pesan memakai <b>template di atas</b> (dengan <code>{nama}</code> tersapa otomatis).
+      Centang kontak tujuan, ketuk <b>Mulai</b>, lalu ketuk 💬 satu per satu — WhatsApp terbuka dengan pesan terisi,
+      ketuk kirim, kembali ke sini, lanjut ke kontak berikut.</div>
+    <div class="toolbar">
+      <button class="btn btn-ghost" id="btnBcAll">Pilih semua yang tampil</button>
+      <button class="btn btn-ghost" id="btnBcNone">Batal pilih</button>
+    </div>
+    <label class="lbl" for="fBcCat">🏷️ Filter grup/kategori</label>
+    <select id="fBcCat" style="margin-bottom:10px"><option value="">Semua kategori</option></select>
+    <div id="bcList"><div class="loading"><span class="spinner"></span>Memuat kontak…</div></div>
+    <button class="btn btn-wa" id="btnBcStart" style="width:100%; justify-content:center; margin-top:10px; padding:12px">▶ Mulai Broadcast (<span id="bcCount">0</span>)</button>
+
+    <div id="bcRunner" style="display:none; margin-top:14px; border-top:1px solid var(--card-border); padding-top:14px">
+      <div class="sub" style="margin-bottom:10px">Kontak <b id="bcIdx">1</b> dari <b id="bcTotal">1</b> • <span id="bcStat"></span></div>
+      <div class="row" style="border:1px solid var(--card-border); border-radius:12px; padding:12px">
+        <div class="avatar" id="bcAvatar">?</div>
+        <div class="info">
+          <div class="nama" id="bcName"></div>
+          <div class="sub" id="bcPhone"></div>
+        </div>
+      </div>
+      <a class="btn btn-wa" id="bcOpen" target="_blank" rel="noopener" href="#"
+        style="width:100%; justify-content:center; margin-top:10px; padding:13px; font-size:15px">💬 Buka Chat WhatsApp</a>
+      <div class="toolbar" style="margin-top:10px">
+        <button class="btn btn-ghost" id="bcNext">✅ Sudah, lanjut</button>
+        <button class="btn btn-ghost" id="bcSkip">⏭ Lewati</button>
+        <button class="btn btn-ghost" id="bcStop">⏹ Selesai</button>
+      </div>
+      <div id="bcDone"></div>
+    </div>
+  </div>
+
+  <footer>
+    Dikembangkan oleh Wartam - SMP Negeri 4 Majenang
+  </footer>
+  </div><!-- /appBody -->
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   PENGATURAN — URL Web App dari Code.gs (untuk tab Kontak & Tautan).
+   Lihat PANDUAN.txt untuk langkah lengkapnya.
+   ============================================================ */
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzn_m-yKRV6FWp4En-KwVKfn9LIUDLbXClaremaX9T8A-i0hTlA2k7AtZXQ86GWtBF7/exec
+const $ = id => document.getElementById(id);
+const toastEl = $('toast');
+let toastT = null;
+
+/* ================= LOGIN + PERAN =================
+   Aplikasi dibuka dengan kode masuk (dicek di server Code.gs).
+   - Kode pengguna -> mode pengguna: hanya memakai aplikasi.
+   - Kode admin   -> mode admin: boleh tambah/edit/simpan kontak.
+   Server mengunci otomatis setelah 5x kode salah (anti-tebak). */
+const CODE_KEY = 'hwa_code';
+const ROLE_KEY = 'hwa_role';
+let USER_ROLE = ''; // 'admin' | 'user' | ''
+const isAdmin = () => USER_ROLE === 'admin';
+const isLoggedIn = () => !!USER_ROLE;
+
+/* POST ke Web App; otomatis sertakan kode sesi untuk aksi tulis */
+async function apiPost(body){
+  body = body || {};
+  if(body.action !== 'login'){
+    const c = sessionStorage.getItem(CODE_KEY);
+    if(c) body.token = c;
+  }
+  const res = await fetch(WEB_APP_URL, {
+    method:'POST', redirect:'follow',
+    headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body: JSON.stringify(body)
+  });
+  return res.json();
+}
+
+function applyAdminUI(){
+  const a = isAdmin();
+  document.body.classList.toggle('is-admin', a);
+  const bm = $('btnAdminMode');
+  if(bm) bm.style.display = a ? 'none' : '';
+  if(!a){
+    EDIT_ROW = null; toggleAdd(false);
+    // Tab Ambil Nomor khusus admin: jika sedang terbuka, pindah ke Kontak (tanpa memuat data)
+    const activeTab = document.querySelector('.tab.active');
+    if(activeTab && activeTab.dataset.tab === 'ambil'){
+      switchTab('kontak');
+    }
+  }
+  renderSheet();
+  if(typeof PARSED !== 'undefined' && PARSED.length) renderParsed();
+}
+
+function enterApp(){
+  $('loginScreen').style.display = 'none';
+  $('appBody').style.display = '';
+  applyAdminUI();
+  // Catatan: data Sheet TIDAK dimuat di sini — baru dimuat saat menu diklik.
+}
+
+function logout(){
+  USER_ROLE = '';
+  sessionStorage.removeItem(CODE_KEY);
+  sessionStorage.removeItem(ROLE_KEY);
+  sessionStorage.removeItem('hwa_group_ok');
+  ALL_ROWS = []; SHEET_LOADED = false; // bersihkan data dari memori
+  $('appBody').style.display = 'none';
+  $('loginScreen').style.display = '';
+  $('loginCode').value = '';
+  $('loginErr').innerHTML = '';
+  document.body.classList.remove('is-admin');
+  setTimeout(()=>{ const inp = $('loginCode'); if(inp) inp.focus(); }, 60);
+}
+
+async function doLogin(code){
+  const data = await apiPost({action:'login', code: code});
+  if(!data.ok) throw new Error(data.error || 'Kode salah');
+  USER_ROLE = data.role;
+  sessionStorage.setItem(CODE_KEY, code);
+  sessionStorage.setItem(ROLE_KEY, data.role);
+  enterApp();
+  toast(data.role === 'admin' ? '🔓 Masuk sebagai admin' : '👋 Selamat datang');
+}
+
+/* Pengguna biasa naik ke mode admin tanpa keluar aplikasi */
+async function adminUpgrade(){
+  const t = prompt('🔐 Masukkan kode admin:');
+  if(t === null || !t.trim()) return;
+  if(!WEB_APP_URL){ toast('⚠️ Isi WEB_APP_URL dulu (lihat PANDUAN.txt)'); return; }
+  const b = $('btnAdminMode');
+  b.disabled = true;
+  try{
+    const data = await apiPost({action:'login', code: t.trim()});
+    if(!data.ok || data.role !== 'admin') throw new Error('Kode admin salah');
+    USER_ROLE = 'admin';
+    sessionStorage.setItem(CODE_KEY, t.trim());
+    sessionStorage.setItem(ROLE_KEY, 'admin');
+    applyAdminUI();
+    toast('🔓 Mode admin aktif — Anda bisa tambah/edit kontak');
+  }catch(e){
+    toast('❌ ' + e.message);
+  }finally{
+    b.disabled = false;
+  }
+}
+$('btnAdminMode').addEventListener('click', adminUpgrade);
+$('btnLogout').addEventListener('click', logout);
+$('btnLogin').addEventListener('click', async ()=>{
+  const code = $('loginCode').value.trim();
+  if(!code){ $('loginErr').innerHTML = '<div class="alert err" style="margin:0">Masukkan kode dulu.</div>'; return; }
+  if(!WEB_APP_URL){ $('loginErr').innerHTML = '<div class="alert err" style="margin:0">⚠️ Isi WEB_APP_URL dulu (lihat PANDUAN.txt).</div>'; return; }
+  const b = $('btnLogin');
+  b.disabled = true; b.textContent = '⏳ Memeriksa…';
+  try{
+    await doLogin(code);
+  }catch(e){
+    $('loginErr').innerHTML = '<div class="alert err" style="margin:0">❌ ' + esc(e.message) + '</div>';
+  }finally{
+    b.disabled = false; b.textContent = 'Masuk';
+  }
+});
+$('loginCode').addEventListener('keydown', e=>{ if(e.key === 'Enter') $('btnLogin').click(); });
+function toast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(()=>toastEl.classList.remove('show'), 2200);
+}
+function esc(s){
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function initial(nama){
+  const t = String(nama||'').trim();
+  return esc((t[0]||'?').toUpperCase());
+}
+
+/* Kenali jenis tautan dari URL-nya (grup WA / Zoom / Meet / Classroom / lainnya) */
+function linkInfo(url){
+  const u = String(url || '').trim();
+  if(!/^https?:\/\//i.test(u))
+    return {ok:false, label:'Link tidak valid', btn:'Buka Tautan', av:'🔗', avCls:''};
+  if(/chat\.whatsapp\.com\//i.test(u))
+    return {ok:true, label:'Grup WhatsApp', btn:'Buka Grup', av:'👥', avCls:' grup'};
+  if(/(^|[/.])zoom\.us\//i.test(u))
+    return {ok:true, label:'Zoom Meeting', btn:'Buka Zoom', av:'📹', avCls:''};
+  if(/meet\.google\.com\//i.test(u))
+    return {ok:true, label:'Google Meet', btn:'Buka Meet', av:'📹', avCls:''};
+  if(/classroom\.google\.com\//i.test(u))
+    return {ok:true, label:'Google Classroom', btn:'Buka Classroom', av:'🎓', avCls:''};
+  return {ok:true, label:'Tautan', btn:'Buka Tautan', av:'🔗', avCls:''};
+}
+
+/* ---------- Template pesan (tersimpan di browser) ---------- */
+const TPL_KEY = 'hubungiWA_template';
+$('tpl').value = localStorage.getItem(TPL_KEY) || 'Halo {nama}, ';
+$('tpl').addEventListener('input', e => localStorage.setItem(TPL_KEY, e.target.value));
+
+/* ---------- Normalisasi nomor HP Indonesia ---------- */
+function normPhone(p){
+  let d = String(p == null ? '' : p).replace(/\D/g, '');
+  if(!d) return '';
+  if(d.startsWith('62')) return d;
+  if(d.startsWith('0'))  return '62' + d.slice(1);
+  if(d.length >= 9 && d.length <= 13) return '62' + d;
+  return d;
+}
+function validPhone(d){ return /^62\d{8,14}$/.test(d); }
+function prettyPhone(d){
+  if(!validPhone(d)) return d || '-';
+  return '+' + d.replace(/(\d{2})(\d{3,4})(\d{3,4})(\d{0,4})/, '$1 $2 $3 $4').trim();
+}
+function chatUrl(phone, nama){
+  const msg = $('tpl').value.replaceAll('{nama}', nama || '');
+  return 'https://wa.me/' + phone + '?text=' + encodeURIComponent(msg);
+}
+function copyText(t){
+  navigator.clipboard.writeText(t).then(
+    ()=>toast('📋 Nomor disalin'),
+    ()=>toast('Gagal menyalin')
+  );
+}
+
+/* ================= TABS ================= */
+function switchTab(t){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active', b.dataset.tab === t));
+  ['ambil','kontak','tautan','broadcast'].forEach(x=>{
+    $('tab-'+x).style.display = (x === t) ? '' : 'none';
+  });
+}
+/* Data Sheet diunduh saat menu diklik — nama kontak tidak muncul otomatis */
+async function ensureSheet(){
+  if(SHEET_LOADED || !WEB_APP_URL) return;
+  toast('⏳ Memuat data…');
+  await loadSheet();
+}
+document.querySelectorAll('.tab').forEach(btn=>{
+  btn.addEventListener('click', async ()=>{
+    const t = btn.dataset.tab;
+    // 1) Tab Ambil Nomor hanya untuk admin
+    if(t === 'ambil' && !isAdmin()){ toast('🔒 Tab Ambil Nomor hanya untuk admin'); return; }
+    // 2) Tab Tautan butuh kode (admin lewat tanpa kode)
+    if(t === 'tautan' && !isAdmin() && !tautanUnlocked()){
+      const ok = await unlockTautan();
+      if(!ok) return;
+    }
+    // 3) Muat data saat menu diklik
+    if((t === 'kontak' || t === 'tautan' || t === 'broadcast') && !SHEET_LOADED){
+      await ensureSheet();
+    }
+    switchTab(t);
+  });
+});
+
+/* ---------- Kode pembuka menu Tautan ---------- */
+function tautanUnlocked(){ return sessionStorage.getItem('hwa_group_ok') === '1'; }
+async function unlockTautan(){
+  if(!WEB_APP_URL){ toast('⚠️ Isi WEB_APP_URL dulu (lihat PANDUAN.txt)'); return false; }
+  const code = prompt('🔐 Masukkan kode untuk membuka menu Tautan:');
+  if(code === null || !code.trim()) return false;
+  try{
+    const data = await apiPost({action:'checkGroup', code: code.trim()});
+    if(!data.ok) throw new Error(data.error || 'Kode salah');
+    sessionStorage.setItem('hwa_group_ok', '1');
+    toast('🔗 Menu Tautan terbuka');
+    return true;
+  }catch(e){
+    toast('❌ ' + e.message);
+    return false;
+  }
+}
+
+/* ---------- Mode terang / gelap ---------- */
+const THEME_KEY = 'hwa_theme';
+function applyTheme(){
+  const light = localStorage.getItem(THEME_KEY) === 'light';
+  document.body.classList.toggle('light', light);
+  const b = $('btnTheme');
+  if(b){
+    b.textContent = light ? '☀️' : '🌙';
+    b.title = light ? 'Ganti ke mode gelap' : 'Ganti ke mode terang';
+  }
+}
+$('btnTheme').addEventListener('click', ()=>{
+  const light = !(localStorage.getItem(THEME_KEY) === 'light');
+  localStorage.setItem(THEME_KEY, light ? 'light' : 'dark');
+  applyTheme();
+});
+
+/* ================= TAB KONTAK & TAUTAN (dari Sheet) ================= */
+let ALL_ROWS = [];
+let SHEET_LOADED = false; // data baru diunduh saat menu diklik (tidak otomatis)
+let EDIT_ROW = null; // nomor baris sheet yang sedang diedit (null = tidak ada)
+function renderSheet(){
+  if(!SHEET_LOADED){
+    $('listKontak').innerHTML = `<div class="empty">👆 Ketuk tab <b>👤 Kontak</b> untuk menampilkan daftar kontak.</div>`;
+    $('listTautan').innerHTML = `<div class="empty">👆 Ketuk tab <b>🔗 Tautan</b> untuk menampilkan daftar tautan.</div>`;
+    $('nKontak').textContent = ''; $('nTautan').textContent = '';
+    $('cKontak').textContent = ''; $('cTautan').textContent = '';
+    return;
+  }
+  const q = $('q').value.trim().toLowerCase();
+  const fc = $('fCat').value;
+  const rows = ALL_ROWS.filter(r => {
+    if(fc && (r.cat||'') !== fc) return false;
+    if(!q) return true;
+    return (r.nama+' '+r.phone+' '+r.group+' '+(r.cat||'')).toLowerCase().includes(q);
+  });
+  const kontak = rows.filter(r => r.phoneNorm);
+  const tautan = rows.filter(r => r.group);
+
+  $('nKontak').textContent = ALL_ROWS.filter(r=>r.phoneNorm).length || '';
+  $('nTautan').textContent   = ALL_ROWS.filter(r=>r.group).length || '';
+  $('cKontak').textContent = kontak.length ? '('+kontak.length+')' : '';
+  $('cTautan').textContent = tautan.length ? '('+tautan.length+')' : '';
+
+  $('listKontak').innerHTML = kontak.length ? kontak.map(r=>{
+    // Mode edit: baris berubah menjadi form
+    if(r.row === EDIT_ROW){
+      return `
+      <div class="row">
+        <div class="avatar">${initial(r.nama)}</div>
+        <div class="info">
+          <input type="text" id="en${r.row}" value="${esc(r.nama)}" placeholder="Nama"
+            style="margin-bottom:6px; padding:8px 10px; font-size:13px">
+          <input type="text" id="ep${r.row}" value="${esc(r.phone)}" placeholder="Nomor WA" inputmode="tel"
+            style="padding:8px 10px; font-size:13px">
+          <input type="text" id="ec${r.row}" value="${esc(r.cat||'')}" placeholder="Grup/Kategori (mis. Guru)"
+            style="margin-top:6px; padding:8px 10px; font-size:13px">
+        </div>
+        <div class="btns">
+          <button class="btn btn-wa" onclick="saveEdit(${r.row})" title="Simpan">💾</button>
+          <button class="btn btn-ghost" onclick="cancelEdit()" title="Batal">✖</button>
+        </div>
+      </div>`;
+    }
+    return `
+    <div class="row">
+      <div class="avatar">${initial(r.nama)}</div>
+      <div class="info">
+        <div class="nama">${esc(r.nama)||'(Tanpa nama)'}${r.cat ? `<span class="badge cat">${esc(r.cat)}</span>` : ''}</div>
+        <div class="sub ${r.phoneValid?'':'invalid'}">${esc(prettyPhone(r.phoneNorm))}${r.phoneValid?'':' — nomor tidak valid'}</div>
+      </div>
+      <div class="btns">
+        <button class="btn btn-ghost need-admin" onclick="startEdit(${r.row})" title="Edit nama/nomor">✏️</button>
+        <button class="btn btn-ghost" onclick="copyText('${esc(r.phoneNorm)}')" title="Salin nomor">📋</button>
+        ${r.phoneValid
+          ? `<a class="btn btn-wa" target="_blank" rel="noopener" href="${esc(chatUrl(r.phoneNorm, r.nama))}">💬</a>`
+          : `<button class="btn btn-wa" disabled>💬</button>`}
+      </div>
+    </div>`;}).join('')
+    : `<div class="empty">Tidak ada kontak yang cocok.</div>`;
+
+  $('listTautan').innerHTML = tautan.length ? tautan.map(r=>{
+    const li = linkInfo(r.group);
+    return `
+    <div class="row">
+      <div class="avatar${li.avCls}">${li.av}</div>
+      <div class="info">
+        <div class="nama">${esc(r.nama)||'(Tanpa nama)'}</div>
+        <div class="sub ${li.ok?'':'invalid'}">${li.label}</div>
+      </div>
+      <div class="btns">
+        ${li.ok ? `<a class="btn btn-wa" target="_blank" rel="noopener" href="${esc(r.group)}">${li.btn}</a>`
+                : `<button class="btn btn-wa" disabled>${li.btn}</button>`}
+      </div>
+    </div>`;
+  }).join('')
+  : `<div class="empty">Tidak ada tautan yang cocok.</div>`;
+}
+$('q').addEventListener('input', renderSheet);
+$('fCat').addEventListener('change', renderSheet);
+$('fBcCat').addEventListener('change', renderBcList);
+
+/* Opsi grup/kategori — diambil dari kolom D Sheet */
+function buildCatOptions(){
+  const cats = [...new Set(ALL_ROWS.map(r=>(r.cat||'').trim()).filter(Boolean))]
+    .sort((a,b)=>a.localeCompare(b,'id'));
+  ['fCat','fBcCat'].forEach(id=>{
+    const sel = $(id);
+    const cur = sel.value;
+    sel.innerHTML = `<option value="">Semua kategori</option>` +
+      cats.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
+    if(cats.includes(cur)) sel.value = cur;
+  });
+}
+
+async function loadSheet(){
+  if(!WEB_APP_URL){
+    $('cfgWarn').innerHTML = `<div class="alert warn">⚠️ <b>Tab Kontak &amp; Tautan belum dikonfigurasi.</b>
+      Isi <b>WEB_APP_URL</b> di index.html (lihat PANDUAN.txt). Tab Ambil Nomor tetap bisa dipakai.</div>`;
+    $('listKontak').innerHTML = `<div class="empty">Menunggu konfigurasi…</div>`;
+    $('listTautan').innerHTML = `<div class="empty">Menunggu konfigurasi…</div>`;
+    $('bcList').innerHTML = `<div class="empty">Menunggu konfigurasi…</div>`;
+    return;
+  }
+  try{
+    const res = await fetch(WEB_APP_URL + '?action=list', {redirect:'follow'});
+    const data = await res.json();
+    if(!data.ok) throw new Error(data.error || 'Gagal membaca data');
+    ALL_ROWS = (data.rows||[]).map(r=>{
+      const phoneNorm = normPhone(r.phone);
+      return {...r, phoneNorm, phoneValid: validPhone(phoneNorm)};
+    });
+    SHEET_LOADED = true;
+    $('cfgWarn').innerHTML = '';
+    buildCatOptions();
+    renderSheet();
+    renderBcList();
+    // Segarkan juga tab Ambil Nomor agar acuan nama dari Sheet ikut terisi
+    if(typeof PARSED !== 'undefined' && PARSED.length) renderParsed();
+  }catch(err){
+    $('cfgWarn').innerHTML = `<div class="alert err">❌ <b>Gagal memuat data Sheet:</b> ${esc(err.message)}</div>`;
+    $('listKontak').innerHTML = `<div class="empty">Data tidak dapat dimuat.</div>`;
+    $('listTautan').innerHTML = `<div class="empty">Data tidak dapat dimuat.</div>`;
+    $('bcList').innerHTML = `<div class="empty">Data tidak dapat dimuat.</div>`;
+  }
+}
+/* Data dimuat setelah login (lihat enterApp), bukan di sini. */
+
+/* ---------- Edit kontak (tab Kontak) ---------- */
+function startEdit(rowNum){
+  EDIT_ROW = rowNum;
+  renderSheet();
+  const inp = document.getElementById('en' + rowNum);
+  if(inp){ inp.focus(); inp.select(); }
+}
+function cancelEdit(){
+  EDIT_ROW = null;
+  renderSheet();
+}
+
+/* ---------- Tambah kontak baru (tab Kontak) ---------- */
+function toggleAdd(show){
+  const f = $('addForm');
+  const open = (typeof show === 'boolean') ? show : (f.style.display === 'none');
+  f.style.display = open ? '' : 'none';
+  if(open){
+    const inp = $('an');
+    if(inp){ inp.focus(); }
+    f.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+}
+async function saveNew(){
+  const nama = $('an').value.trim();
+  const phone = $('ap').value.trim();
+  const cat = $('ac').value.trim();
+  if(!phone){ toast('Nomor WA tidak boleh kosong'); return; }
+  try{
+    const data = await apiPost({action:'append', rows:[{nama: nama, phone: phone, cat: cat}]});
+    if(!data.ok) throw new Error(data.error || 'Gagal menyimpan');
+    if(!data.added){ toast('⚠️ Tidak tersimpan — nomor duplikat atau tidak valid'); return; }
+    toast('✅ Kontak tersimpan');
+    $('an').value = $('ap').value = $('ac').value = '';
+    toggleAdd(false);
+    loadSheet();
+  }catch(e){
+    toast('❌ ' + e.message);
+  }
+}
+$('btnAdd').addEventListener('click', ()=>toggleAdd());
+async function saveEdit(rowNum){
+  const nama = document.getElementById('en' + rowNum).value.trim();
+  const phone = document.getElementById('ep' + rowNum).value.trim();
+  const cat = document.getElementById('ec' + rowNum).value.trim();
+  if(!phone){ toast('Nomor WA tidak boleh kosong'); return; }
+  try{
+    const data = await apiPost({action:'update', row: rowNum, nama: nama, phone: phone, cat: cat});
+    if(!data.ok) throw new Error(data.error || 'Gagal menyimpan');
+    toast('✅ Perubahan tersimpan');
+    EDIT_ROW = null;
+    loadSheet();
+  }catch(e){
+    toast('❌ ' + e.message);
+  }
+}
+
+/* ================= TAB BROADCAST =================
+   Catatan jujur: aplikasi web tidak bisa mengirim pesan WA otomatis.
+   Broadcast di sini = dipandu ketuk satu per satu: tiap kontak dibuka
+   via wa.me dengan pesan terisi, pengguna mengetuk kirim sendiri. */
+let BC_CANDIDATES = []; // kontak valid dari Sheet
+let BC_LIST = [];       // antrean terpilih [{nama, phone}]
+let BC_I = 0, BC_OK = 0, BC_SKIP = 0;
+
+function renderBcList(){
+  if(!SHEET_LOADED){
+    $('bcList').innerHTML = `<div class="empty">👆 Ketuk tab <b>📢 Broadcast</b> untuk memuat daftar kontak.</div>`;
+    updateBcCount();
+    return;
+  }
+  const fc = $('fBcCat').value;
+  BC_CANDIDATES = ALL_ROWS.filter(r => r.phoneNorm && r.phoneValid && (!fc || (r.cat||'') === fc));
+  $('bcList').innerHTML = BC_CANDIDATES.length ? BC_CANDIDATES.map((r,i)=>`
+    <label class="row" style="cursor:pointer">
+      <input type="checkbox" class="bcCheck" value="${i}" onchange="updateBcCount()"
+        style="width:18px; height:18px; accent-color:#25D366; flex:0 0 auto">
+      <div class="avatar">${initial(r.nama)}</div>
+      <div class="info">
+        <div class="nama">${esc(r.nama)||'(Tanpa nama)'}${r.cat ? `<span class="badge cat">${esc(r.cat)}</span>` : ''}</div>
+        <div class="sub">${esc(prettyPhone(r.phoneNorm))}</div>
+      </div>
+    </label>`).join('')
+    : `<div class="empty">Belum ada kontak bernomor valid${fc?` untuk kategori “${esc(fc)}”`:''} di Sheet.</div>`;
+  updateBcCount();
+}
+function updateBcCount(){
+  const n = document.querySelectorAll('.bcCheck:checked').length;
+  $('bcCount').textContent = n;
+  $('btnBcStart').disabled = !n;
+}
+function bcStep(){
+  if(BC_I >= BC_LIST.length){ bcFinish(); return; }
+  const c = BC_LIST[BC_I];
+  $('bcIdx').textContent = BC_I + 1;
+  $('bcTotal').textContent = BC_LIST.length;
+  $('bcStat').textContent = `✅ ${BC_OK} • ⏭ ${BC_SKIP}`;
+  $('bcAvatar').textContent = initial(c.nama);
+  $('bcName').textContent = c.nama || '(Tanpa nama)';
+  $('bcPhone').textContent = prettyPhone(c.phone);
+  $('bcOpen').href = chatUrl(c.phone, c.nama);
+  $('bcDone').innerHTML = '';
+}
+function bcStart(){
+  const checked = [...document.querySelectorAll('.bcCheck:checked')].map(cb=>BC_CANDIDATES[+cb.value]);
+  if(!checked.length){ toast('Pilih dulu kontak tujuannya'); return; }
+  BC_LIST = checked.map(r=>({nama:r.nama, phone:r.phoneNorm}));
+  BC_I = 0; BC_OK = 0; BC_SKIP = 0;
+  $('bcRunner').style.display = '';
+  $('bcRunner').scrollIntoView({behavior:'smooth', block:'nearest'});
+  bcStep();
+}
+function bcFinish(){
+  $('bcDone').innerHTML = `<div class="alert ok" style="margin-top:12px; margin-bottom:0">
+    ✅ <b>Selesai.</b> ${BC_OK} chat dibuka${BC_SKIP ? `, ${BC_SKIP} dilewati` : ``} dari ${BC_LIST.length} kontak.<br>
+    Pastikan tiap pesan sudah diketuk <b>kirim</b> di WhatsApp.</div>`;
+  $('bcIdx').textContent = BC_LIST.length;
+  toast('✅ Broadcast selesai');
+}
+$('btnBcAll').addEventListener('click', ()=>{
+  document.querySelectorAll('.bcCheck').forEach(cb=>cb.checked = true);
+  updateBcCount();
+});
+$('btnBcNone').addEventListener('click', ()=>{
+  document.querySelectorAll('.bcCheck').forEach(cb=>cb.checked = false);
+  updateBcCount();
+});
+$('btnBcStart').addEventListener('click', bcStart);
+$('bcNext').addEventListener('click', ()=>{ BC_OK++; BC_I++; bcStep(); });
+$('bcSkip').addEventListener('click', ()=>{ BC_SKIP++; BC_I++; bcStep(); });
+$('bcStop').addEventListener('click', bcFinish);
+
+/* ================= TAB AMBIL NOMOR (parser multi-format) =================
+   1) Baris pesan WA: [3/10/26, 08.00] Pengirim: pesan   (export / hasil copy)
+      - "~Nama" = nama profil WA (nomor belum disimpan di HP)
+   2) Baris pasangan nama-nomor: "Nama - 0812..." / "0812... - Nama"
+   3) Baris nomor saja: "081234567890" */
+const lineRe = /^\[?(\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4})[,\s]+(\d{1,2}[.:]\d{2}(?:[.:]\d{2})?(?:\s*[AP]M)?)\]?\s*(?:[-–—]\s*)?([^:\n]{1,60}):/;
+
+function cleanName(s){
+  let t = String(s || '').trim();
+  t = t.replace(/^~\s*/, '');                    // awalan ~ (nama profil)
+  t = t.replace(/^[-•\d.)\s]+/, '').trim();      // bullet / penomoran
+  t = t.replace(/^["'“”]+|["'“”]+$/g, '').trim();
+  if(!t || t.length > 60) return '';
+  if(/^\+?[\d\s\-().]+$/.test(t)) return '';     // itu nomor, bukan nama
+  return t;
+}
+function isPlausiblePhone(s){
+  const d = String(s || '').replace(/\D/g, '');
+  return d.length >= 9 && d.length <= 15;
+}
+/* Baris "Nama - Nomor", "Nomor - Nama", "Nomor saja", atau "~Nama saja". */
+function parsePairLine(t){
+  let m = t.match(/^(.{1,60}?)\s*[-–—:|]\s*(\+?[\d][\d\s\-.()]{7,20})$/);
+  if(m && isPlausiblePhone(m[2])){
+    const nm = cleanName(m[1]);
+    if(nm && !/^\d{1,2}[\/\-.]/.test(m[1].trim())) return {nama:nm, phone:m[2].trim()};
+  }
+  m = t.match(/^(\+?[\d][\d\s\-.()]{7,20})\s*[-–—:|]\s*(.{1,60})$/);
+  if(m && isPlausiblePhone(m[1])){
+    const nm = cleanName(m[2]);
+    if(nm) return {nama:nm, phone:m[1].trim()};
+  }
+  if(isPlausiblePhone(t) && /^\+?[\d\s\-().]{9,22}$/.test(t)) return {nama:'', phone:t.trim()};
+  // "~Nama" saja (tanpa titik dua — kalau ada titik dua itu baris pesan)
+  m = t.match(/^~([^:]{1,60})$/);
+  if(m){
+    const nm = cleanName(m[1]);
+    if(nm) return {nama:nm, phone:'', push:true};
+  }
+  return null;
+}
+
+/* Klasifikasi satu baris: pesan ber-timestamp, pasangan nama-nomor,
+   atau pesan "Pengirim: isi" tanpa timestamp (hasil copy). */
+function classifyLine(t){
+  let m = t.match(lineRe);
+  if(m) return {type:'msg', senderRaw: m[3].trim(), msg: t.slice(m[0].length).trim()};
+  const p = parsePairLine(t);
+  if(p) return {type:'pair', nama: p.nama, phone: p.phone, push: !!p.push};
+  m = t.match(/^([^:\n]{1,40}):\s*(.+)$/);
+  if(m){
+    const s = m[1].trim();
+    if(s && s.length > 1 && !/^(Anda|You)$/i.test(s)) return {type:'msg', senderRaw: s, msg: m[2].trim()};
+  }
+  return null;
+}
+
+function parseExport(text){
+  const byNum = new Map();   // norm -> {nama, pushName, pesan, last}
+  const byName = new Map();  // nama(lower) -> {nama, pushName, pesan, last}
+
+  const setName = (e, nama, pushName) => {
+    if(!nama) return;
+    // prioritas: nama biasa > nama profil (~) > kosong
+    if(!e.nama || (e.pushName && !pushName)){ e.nama = nama; e.pushName = !!pushName; }
+  };
+
+  for(const rawLn of String(text || '').split(/\r?\n/)){
+    const t = rawLn.replace(/^[\u200E\u200F\uFEFF]+/, '').trim();
+    if(!t) continue;
+    const c = classifyLine(t);
+    if(!c) continue;
+
+    // 1) baris pesan (ber-timestamp maupun tidak)
+    if(c.type === 'msg'){
+      const senderRaw = c.senderRaw;
+      if(!senderRaw || /^(Anda|You)$/i.test(senderRaw)) continue;
+      const msg = c.msg;
+      let push = false, label = senderRaw;
+      if(label.startsWith('~')){ push = true; label = label.slice(1).trim(); }
+      const digits = label.replace(/\D/g, '');
+      const looksPhone = /^\+?[\d\s\-().]{9,22}$/.test(label) && digits.length >= 9;
+      if(looksPhone){
+        const norm = normPhone(label);
+        let e = byNum.get(norm);
+        if(!e){ e = {nama:'', pushName:false, pesan:0, last:''}; byNum.set(norm, e); }
+        e.pesan++;
+        if(msg) e.last = msg.slice(0, 90);
+      } else {
+        const nm = cleanName(label);
+        if(!nm) continue;
+        const key = nm.toLowerCase();
+        let e = byName.get(key);
+        if(!e){ e = {nama:nm, pushName:push, pesan:0, last:''}; byName.set(key, e); }
+        e.pesan++;
+        if(msg) e.last = msg.slice(0, 90);
+      }
+      continue;
+    }
+
+    // 2) baris pasangan nama-nomor / nomor saja / ~nama saja
+    if(c.type === 'pair'){
+      if(c.phone){
+        const norm = normPhone(c.phone);
+        let e = byNum.get(norm);
+        if(!e){ e = {nama:'', pushName:false, pesan:0, last:''}; byNum.set(norm, e); }
+        setName(e, c.nama, c.push);
+      } else if(c.nama){
+        const key = c.nama.toLowerCase();
+        if(!byName.has(key)) byName.set(key, {nama:c.nama, pushName:c.push, pesan:0, last:''});
+      }
+      continue;
+    }
+  }
+
+  const hasil = [];
+  for(const [num, e] of byNum)
+    hasil.push({nama:e.nama, pushName:e.pushName, nomor:num, valid:validPhone(num), pesan:e.pesan, last:e.last});
+  for(const e of byName.values())
+    hasil.push({nama:e.nama, pushName:e.pushName, nomor:'', valid:false, pesan:e.pesan, last:e.last});
+  hasil.sort((a,b)=>
+    ((b.nomor?1:0)-(a.nomor?1:0)) ||
+    a.nomor.localeCompare(b.nomor) ||
+    a.nama.localeCompare(b.nama)
+  );
+  return hasil;
+}
+
+/* Cari nama di Sheet berdasarkan nomor (untuk acuan otomatis). */
+function findSheetName(phoneNorm){
+  const hit = ALL_ROWS.find(r => r.phoneNorm === phoneNorm && r.nama);
+  return hit ? hit.nama : '';
+}
+/* Cari nomor di Sheet berdasarkan nama (untuk kontak tersimpan). */
+function findSheetPhone(nama){
+  const key = String(nama || '').trim().toLowerCase();
+  if(!key) return '';
+  const hit = ALL_ROWS.find(r => r.nama && r.nama.trim().toLowerCase() === key && r.phoneNorm);
+  return hit ? hit.phoneNorm : '';
+}
+
+let PARSED = [];
+function renderParsed(){
+  const rows = PARSED;
+  const ok = rows.filter(r=>r.valid);
+  $('parseResult').innerHTML = `
+    <div class="toolbar" style="margin-top:12px">
+      <button class="btn btn-wa need-admin" id="btnSave">💾 Simpan ke Sheet</button>
+      <button class="btn btn-ghost" id="btnCsvDl">⬇️ CSV</button>
+      <button class="btn btn-ghost" id="btnCsvCp">📋 Salin CSV</button>
+    </div>` +
+    (rows.length ? rows.map((r,i)=>{
+    // Acuan dua arah dengan Sheet:
+    // 1) nomor dikenal -> nama otomatis terisi
+    if(r.nomor && !r.nama){
+      const saran = findSheetName(r.nomor);
+      if(saran) r.nama = saran;
+    }
+    // 2) nama dikenal (kontak tersimpan di HP) -> nomor dilengkapi dari Sheet
+    if(!r.nomor && r.nama){
+      const p = findSheetPhone(r.nama);
+      if(p && !rows.some(o => o !== r && o.nomor === p)){
+        r.nomor = p;
+        r.valid = validPhone(p);
+        r._dariKontak = true;
+      }
+    }
+    const pt = r.pesan > 0 ? r.pesan + ' pesan • ' : '';
+    const bProfil = r.pushName ? ` <span class="badge ok">👤 nama profil</span>` : ``;
+    const bKontak = r._dariKontak ? ` • <span class="badge ok">📇 dari Kontak</span>` : ``;
+    const bManual = r._manual ? ` <span class="badge ok">✏️ diisi manual</span>` : ``;
+    return `
+    <div class="row">
+      <div class="avatar">${r.nomor ? initial(r.nomor.slice(-2)) : initial(r.nama)}</div>
+      <div class="info">
+        <div class="nama">${r.nomor ? esc(prettyPhone(r.nomor)) : esc(r.nama)}</div>
+        <div class="sub">${r.nomor
+          ? (r.valid ? `${pt}<span class="badge ok">✓ valid</span>${bProfil}${bManual}${bKontak}` : `${pt}<span class="badge no">perlu cek</span>`)
+          : `${pt}<span class="badge no">nama saja — tidak cocok di Kontak</span>`}</div>
+        ${r.last ? `<div class="sub" style="margin-top:3px">💬 terakhir: &ldquo;${esc(r.last)}&rdquo;</div>` : ``}
+        ${r.nomor
+          ? `<input type="text" placeholder="Nama (otomatis dari Kontak bila ada)" value="${esc(r.nama)}"
+              oninput="PARSED[${i}].nama=this.value"
+              style="margin-top:6px; padding:7px 10px; font-size:12.5px">`
+          : `<div style="display:flex; gap:6px; margin-top:6px">
+              <input type="text" inputmode="tel" id="np${i}" placeholder="Ketik nomor WA-nya (lihat di kontak HP)"
+                style="padding:7px 10px; font-size:12.5px">
+              <button class="btn btn-ghost" style="padding:7px 12px; flex:0 0 auto" onclick="applyPhone(${i})" title="Pasang nomor">✓</button>
+            </div>
+            <div class="hint">Ini kontak tersimpan di HP — salin nomornya dari kontak HP ke sini, lalu ketuk ✓.</div>`}
+      </div>
+      <div class="btns">
+        ${r.valid
+          ? `<a class="btn btn-wa" target="_blank" rel="noopener" href="${esc(chatUrl(r.nomor, ''))}">💬</a>`
+          : `<button class="btn btn-wa" disabled title="Tidak ada nomor valid">💬</button>`}
+      </div>
+    </div>`;}).join('')
+    : `<div class="empty">Tidak ada data.</div>`) +
+    `<div class="alert warn" style="margin-top:12px; margin-bottom:0">
+      💡 Nama bertanda 👤 adalah <b>nama profil WA</b> — muncul walau nomornya belum tersimpan di HP Bapak,
+      bisa jadi acuan saat menulis nama kontak. Nama yang cocok dengan tab 👤 Kontak otomatis dilengkapi
+      nomornya (ditandai 📇 dari Kontak). CSV bisa ditempel ke sheet "Kontak" (kolom Nama &amp; Nomor WA)
+      supaya tersimpan permanen.
+    </div>`;
+
+  const toCsv = ()=>{
+    const q = s => '"' + String(s).replace(/"/g,'""') + '"';
+    return 'nomor,nama,jumlah_pesan\n' +
+      rows.filter(r=>r.nomor).map(r=>[q(r.nomor), q(r.nama), r.pesan].join(',')).join('\n');
+  };
+  $('btnSave').addEventListener('click', saveToSheet);
+  $('btnCsvDl').addEventListener('click', ()=>{
+    const blob = new Blob(["\uFEFF" + toCsv()], {type:'text/csv;charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'nomor-grup-wa.csv';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast('⬇️ CSV diunduh');
+  });
+  $('btnCsvCp').addEventListener('click', ()=>{
+    navigator.clipboard.writeText(toCsv()).then(
+      ()=>toast('📋 CSV disalin — tempel ke Sheet "Kontak"'),
+      ()=>toast('Gagal menyalin')
+    );
+  });
+}
+
+/* Menyimpan nomor hasil parser ke Google Sheet (lewati duplikat otomatis). */
+async function saveToSheet(){
+  if(!WEB_APP_URL){
+    toast('⚠️ Isi WEB_APP_URL dulu (lihat PANDUAN.txt)');
+    return;
+  }
+  const cat = ($('defCat').value || '').trim();
+  const rows = PARSED.filter(r=>r.valid).map(r=>({nama:(r.nama||'').trim(), phone:r.nomor, cat}));
+  if(!rows.length){ toast('Tidak ada nomor valid untuk disimpan'); return; }
+  const btn = $('btnSave');
+  btn.disabled = true;
+  const labelAwal = btn.innerHTML;
+  btn.innerHTML = '⏳ Menyimpan…';
+  try{
+    const data = await apiPost({action:'append', rows});
+    if(!data.ok) throw new Error(data.error || 'Gagal menyimpan');
+    $('parseStatus').innerHTML = `<div class="alert ok">✅ <b>${data.added} nomor</b> tersimpan ke Sheet` +
+      (cat ? ` dengan kategori <b>“${esc(cat)}”</b>` : ``) +
+      (data.skipped ? `, <b>${data.skipped}</b> dilewati (duplikat/kosong)` : ``) +
+      `. Buka tab 👤 Kontak untuk melihatnya.</div>`;
+    toast(`✅ ${data.added} tersimpan`);
+    loadSheet(); // segarkan tab Kontak
+  }catch(e){
+    $('parseStatus').innerHTML = `<div class="alert err">❌ <b>Gagal menyimpan:</b> ${esc(e.message)}<br>
+      Jika ini deploy lama, lakukan Deploy &gt; Manage deployments &gt; ✏️ &gt; New version &gt; Deploy di Apps Script.</div>`;
+  }finally{
+    btn.disabled = false;
+    btn.innerHTML = labelAwal;
+  }
+}
+
+function processText(text, sumber){
+  $('parseStatus').innerHTML = '';
+  $('parseResult').innerHTML = '';
+  try{
+    PARSED = parseExport(String(text || ''));
+    if(!PARSED.length){
+      $('parseStatus').innerHTML = `<div class="alert err">❌ Tidak ada data yang dikenali dari ${sumber}.
+        Pastikan file-nya adalah hasil <b>Ekspor chat</b> WhatsApp (.txt).</div>`;
+      return;
+    }
+    const nNomor = PARSED.filter(r=>r.valid).length;
+    const nNama = PARSED.filter(r=>!r.nomor && r.nama).length;
+    $('parseStatus').innerHTML = `<div class="alert ok">✅ Ditemukan <b>${nNomor} nomor valid</b>` +
+      (nNama ? ` dan <b>${nNama} nama</b>` : ``) +
+      ` dari ${sumber}.</div>`;
+    renderParsed();
+  }catch(e){
+    $('parseStatus').innerHTML = `<div class="alert err">❌ Gagal membaca: ${esc(e.message)}</div>`;
+  }
+}
+
+/* Memasang nomor yang diketik manual untuk baris nama-saja (kontak tersimpan di HP). */
+function applyPhone(i){
+  const inp = document.getElementById('np' + i);
+  if(!inp) return;
+  const d = normPhone(inp.value);
+  if(!d){ toast('Isi nomornya dulu'); return; }
+  PARSED[i].nomor = d;
+  PARSED[i].valid = validPhone(d);
+  PARSED[i]._manual = true;
+  renderParsed();
+  toast(validPhone(d) ? '✅ Nomor terpasang — tinggal Simpan ke Sheet' : '⚠️ Format nomor meragukan — periksa lagi');
+}
+
+function handleFile(f){
+  if(!f) return;
+  $('parseStatus').innerHTML = `<div class="alert ok">⏳ Membaca <b>${esc(f.name)}</b>…</div>`;
+  $('parseResult').innerHTML = '';
+  const rd = new FileReader();
+  rd.onload = ()=>processText(String(rd.result || ''), 'file');
+  rd.onerror = ()=>{ $('parseStatus').innerHTML = `<div class="alert err">❌ File tidak bisa dibaca.</div>`; };
+  rd.readAsText(f);
+}
+const drop = $('drop'), fileInp = $('file');
+drop.addEventListener('click', ()=>fileInp.click());
+fileInp.addEventListener('change', e=>handleFile(e.target.files[0]));
+['dragover','dragenter'].forEach(ev=>drop.addEventListener(ev, e=>{e.preventDefault(); drop.classList.add('over');}));
+['dragleave','drop'].forEach(ev=>drop.addEventListener(ev, e=>{e.preventDefault(); drop.classList.remove('over');}));
+drop.addEventListener('drop', e=>handleFile(e.dataTransfer.files[0]));
+
+/* Saat dibuka: terapkan tema, lalu pulihkan sesi login bila ada */
+applyTheme();
+(function(){
+  try{
+    const c = sessionStorage.getItem(CODE_KEY);
+    if(c && WEB_APP_URL){
+      apiPost({action:'login', code: c}).then(d=>{
+        if(d && d.ok){ USER_ROLE = d.role; enterApp(); }
+        else { const i=$('loginCode'); if(i) i.focus(); }
+      }).catch(()=>{});
+    }else{
+      const i=$('loginCode'); if(i) setTimeout(()=>i.focus(), 120);
+    }
+  }catch(e){ /* abaikan, tetap di layar login */ }
+})();
+</script>
+</body>
+</html>
